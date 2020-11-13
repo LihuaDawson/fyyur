@@ -41,7 +41,7 @@ class Venue(db.Model):
     phone = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    is_seeking_talent = db.Column(db.Boolean)
+    is_seeking_talent = db.Column(db.Boolean,default=False)
     shows = db.relationship('Show', backref='venue', lazy = True)
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     def __repr__(self):
@@ -238,6 +238,23 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
+  name = request.form['name']
+  city = request.form['city']
+  state = request.form['state']
+  address = request.form['address']
+  phone = request.form['phone']
+  image_link = request.form['image_link']
+  facebook_link = request.form['facebook_link']
+  is_seeking_talent = request.form['is_seeking_talent']
+  if is_seeking_talent :
+        is_seeking_talent = True
+  else:
+        is_seeking_talent = False
+  venue = Venue(name = name, city = city,state = state,address=address,phone = phone,image_link=image_link,facebook_link=facebook_link,is_seeking_talent=is_seeking_talent)
+
+  db.session.add(venue)
+  db.session.commit()
+
 
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')

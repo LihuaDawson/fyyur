@@ -1,6 +1,7 @@
 from datetime import datetime
 from flask_wtf import Form
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
+from wtforms.fields.core import BooleanField
 from wtforms.validators import DataRequired, AnyOf, URL
 
 class ShowForm(Form):
@@ -88,33 +89,12 @@ class VenueForm(Form):
     image_link = StringField(
         'image_link'
     )
-    genres = SelectMultipleField(
-        # TODO implement enum restriction
-        'genres', validators=[DataRequired()],
-        choices=[
-            ('Alternative', 'Alternative'),
-            ('Blues', 'Blues'),
-            ('Classical', 'Classical'),
-            ('Country', 'Country'),
-            ('Electronic', 'Electronic'),
-            ('Folk', 'Folk'),
-            ('Funk', 'Funk'),
-            ('Hip-Hop', 'Hip-Hop'),
-            ('Heavy Metal', 'Heavy Metal'),
-            ('Instrumental', 'Instrumental'),
-            ('Jazz', 'Jazz'),
-            ('Musical Theatre', 'Musical Theatre'),
-            ('Pop', 'Pop'),
-            ('Punk', 'Punk'),
-            ('R&B', 'R&B'),
-            ('Reggae', 'Reggae'),
-            ('Rock n Roll', 'Rock n Roll'),
-            ('Soul', 'Soul'),
-            ('Other', 'Other'),
-        ]
-    )
+    
     facebook_link = StringField(
         'facebook_link', validators=[URL()]
+    )
+    is_seeking_talent = BooleanField(
+        'is_seeking_talent', validators=[DataRequired(),]
     )
 
 class ArtistForm(Form):
