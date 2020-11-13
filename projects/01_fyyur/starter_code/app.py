@@ -3,6 +3,7 @@
 #----------------------------------------------------------------------------#
 
 import json
+import sys
 import dateutil.parser
 import babel
 from flask import Flask, render_template, request, Response, flash, redirect, url_for
@@ -238,23 +239,35 @@ def create_venue_form():
 def create_venue_submission():
   # TODO: insert form data as a new Venue record in the db, instead
   # TODO: modify data to be the data object returned from db insertion
-  name = request.form['name']
-  city = request.form['city']
-  state = request.form['state']
-  address = request.form['address']
-  phone = request.form['phone']
-  image_link = request.form['image_link']
-  facebook_link = request.form['facebook_link']
-  is_seeking_talent = request.form['is_seeking_talent']
-  if is_seeking_talent :
-        is_seeking_talent = True
-  else:
-        is_seeking_talent = False
-  venue = Venue(name = name, city = city,state = state,address=address,phone = phone,image_link=image_link,facebook_link=facebook_link,is_seeking_talent=is_seeking_talent)
+  error = False
+  try:
+    name = request.form['name']
+    city = request.form['city']
+    state = request.form['state']
+    address = request.form['address']
+    phone = request.form['phone']
+    image_link = request.form['image_link']
+    facebook_link = request.form['facebook_link']
+    is_seeking_talent = request.form['is_seeking_talent']
+    if is_seeking_talent :
+          is_seeking_talent = True
+    else:
+          is_seeking_talent = False
+    venue = Venue(name = name, city = city,state = state,address=address,phone = phone,image_link=image_link,facebook_link=facebook_link,is_seeking_talent=is_seeking_talent)
 
-  db.session.add(venue)
-  db.session.commit()
+    db.session.add(venue)
+    db.session.commit()
+  except:
+    error = True
+    db.session.rollback()
+    print(sys.exc_info())
+  finally:
+    db.session.close()
+  
+  
+      
 
+    
 
   # on successful db insert, flash success
   flash('Venue ' + request.form['name'] + ' was successfully listed!')
