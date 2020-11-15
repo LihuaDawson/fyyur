@@ -191,7 +191,7 @@ class ArtistForm(FlaskForm):
             ('Reggae', 'Reggae'),
             ('Rock n Roll', 'Rock n Roll'),
             ('Soul', 'Soul'),
-            ('Other', 'Other'),
+            ('Other', 'Other')
         ]
     )
     facebook_link = StringField(
