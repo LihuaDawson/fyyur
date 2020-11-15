@@ -1,10 +1,12 @@
 from datetime import datetime
-from flask_wtf import Form
+from typing import Optional
+from flask_wtf import FlaskForm
+from sqlalchemy.sql.elements import BooleanClauseList
 from wtforms import StringField, SelectField, SelectMultipleField, DateTimeField
 from wtforms.fields.core import BooleanField
-from wtforms.validators import DataRequired, AnyOf, URL
+from wtforms.validators import DataRequired, AnyOf, InputRequired, URL
 
-class ShowForm(Form):
+class ShowForm(FlaskForm):
     artist_id = StringField(
         'artist_id'
     )
@@ -17,7 +19,7 @@ class ShowForm(Form):
         default= datetime.today()
     )
 
-class VenueForm(Form):
+class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
@@ -94,10 +96,10 @@ class VenueForm(Form):
         'facebook_link', validators=[URL()]
     )
     is_seeking_talent = BooleanField(
-        'is_seeking_talent', validators=[DataRequired(),]
+        'is_seeking_talent'
     )
 
-class ArtistForm(Form):
+class ArtistForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
