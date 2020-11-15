@@ -201,5 +201,8 @@ class ArtistForm(FlaskForm):
     is_seeking_performance = BooleanField(
         'is_seeking_performance'
     )
+    seeking_description = StringField(
+        'seeking_description'
+    )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

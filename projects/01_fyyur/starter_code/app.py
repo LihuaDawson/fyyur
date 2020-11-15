@@ -61,6 +61,7 @@ class Artist(db.Model):
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
     is_seeking_performance = db.Column(db.Boolean)
+    seeking_description = db.Column(db.String())
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     shows = db.relationship('Show', backref='artist', lazy =True)
 
@@ -289,16 +290,17 @@ def delete_venue(venue_id):
 @app.route('/artists')
 def artists():
   # TODO: replace with real data returned from querying the database
-  data=[{
-    "id": 4,
-    "name": "Guns N Petals",
-  }, {
-    "id": 5,
-    "name": "Matt Quevedo",
-  }, {
-    "id": 6,
-    "name": "The Wild Sax Band",
-  }]
+  # data=[{
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  # }, {
+  #   "id": 5,
+  #   "name": "Matt Quevedo",
+  # }, {
+  #   "id": 6,
+  #   "name": "The Wild Sax Band",
+  # }]
+  data = Artist.query.all()
   return render_template('pages/artists.html', artists=data)
 
 @app.route('/artists/search', methods=['POST'])
@@ -392,6 +394,7 @@ def show_artist(artist_id):
     "upcoming_shows_count": 3,
   }
   data = list(filter(lambda d: d['id'] == artist_id, [data1, data2, data3]))[0]
+  # data = Artist.query.all()
   return render_template('pages/show_artist.html', artist=data)
 
 #  Update
@@ -471,12 +474,13 @@ def create_artist_submission():
       image_link = request.form['image_link']
       genres = request.form['genres']
       facebook_link = request.form['facebook_link']
+      seeking_description = request.form['seeking_description']
       is_seeking_performance = request.form.get('is_seeking_performance','')
       if is_seeking_performance:
             is_seeking_performance = True
       else:
             is_seeking_performance = False
-      artist = Artist(name = name, city = city,state = state,phone = phone,image_link=image_link,genres = genres,facebook_link=facebook_link,is_seeking_performance=is_seeking_performance)
+      artist = Artist(name = name, city = city,state = state,phone = phone,image_link=image_link,genres = genres,facebook_link=facebook_link,is_seeking_performance=is_seeking_performance,seeking_description=seeking_description)
 
       db.session.add(artist)
       db.session.commit()
