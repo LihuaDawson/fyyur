@@ -60,17 +60,7 @@ h3 > span.orange {
   border: none;
   outline: none;
   color: red;
-  float: right;
   cursor: pointer;
   font-size:20px;
 }
 
-.items {
-  
-  clear: both;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  width: 300px;
-  
-}

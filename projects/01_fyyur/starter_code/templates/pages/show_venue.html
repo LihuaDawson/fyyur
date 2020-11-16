@@ -6,9 +6,11 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+		
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
+		
 		<div class="genres">
 			{% for genre in venue.genres %}
 			<span class="genre">{{ genre }}</span>
@@ -41,10 +43,28 @@
 			<i class="fas fa-moon"></i> Not currently seeking talent
 		</p>
 		{% endif %}
+		<button id='to_delete' data-id = '{{ venue.id }}'>Delete</button>
+		<script>
+		const to_delete = document.getElementById('to_delete');
+		to_delete.onclick = function(e){
+			console.log('event',e);
+			const deleteId = e.target.dataset['id'];
+			console.log('dataid',deleteId);
+			fetch('/venues/'+deleteId+'/delete', {
+				method:'DELETE'
+			});
+			window.location.href = '/';
+		}
+	
+
+	</script>
 	</div>
 	<div class="col-sm-6">
 		<img src="{{ venue.image_link }}" alt="Venue Image" />
 	</div>
+	
+	
+	
 </div>
 <section>
 	<h2 class="monospace">{{ venue.upcoming_shows_count }} Upcoming {% if venue.upcoming_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
@@ -76,4 +96,6 @@
 </section>
 
 {% endblock %}
+
+
 

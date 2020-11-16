@@ -7,7 +7,7 @@
 <h3>{{ area.city }}, {{ area.state }}</h3>
 
 	<ul class="items">
-		<button class="to_deletes" data-id='{{ area.id }}'>&cross;</button>	
+		
 		<li>
 			<a href="/venues/{{ area.id }}" class='venue'>
 				<i class="fas fa-music"></i>
@@ -21,4 +21,15 @@
 	</ul>
 
 {% endfor %}
+<script>
+const to_deletes = document.querySelectorAll('to_deletes')
+for(let i = 0; i < to_deletes.length; i++) {
+  const to_delete = to_deletes[i];
+  to_delete.onclick = function (e) {
+    alert('something here!');
+    console.log('event', e);
+    
+  }
+}
+</script>
 {% endblock %}
