@@ -17,6 +17,7 @@ class ShowForm(FlaskForm):
         'start_time',
         validators=[DataRequired()],
         default= datetime.today()
+        
     )
 
 class VenueForm(FlaskForm):

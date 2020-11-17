@@ -74,19 +74,20 @@ class Show(db.Model):
       id = db.Column(db.Integer, primary_key=True)
       venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False)
       artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False)
-      showtime = db.Column(db.DateTime, nullable = False)
+      start_time = db.Column(db.DateTime, nullable = False)
 
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
 
 def format_datetime(value, format='medium'):
-  date = dateutil.parser.parse(value)
-  if format == 'full':
-      format="EEEE MMMM, d, y 'at' h:mma"
-  elif format == 'medium':
-      format="EE MM, dd, y h:mma"
-  return babel.dates.format_datetime(date, format, locale='en')
+    date = dateutil.parser.parse(value)
+    if format == 'full':
+        format = "MM, d, y 'at' h:m"
+    elif format == 'medium':
+        format = "EE MM, dd, y h:mma"
+
+    return babel.dates.format_datetime(date, format, locale='en')
 
 app.jinja_env.filters['datetime'] = format_datetime
 
@@ -398,29 +399,37 @@ def show_artist(artist_id):
     "past_shows_count": 0,
     "upcoming_shows_count": 3,
   }
-  data = Artist.query.get(artist_id)
+  artist = Artist.query.get(artist_id)
+  nowTime = datetime.utcnow()
+  artist.upcoming_shows = db.session.query(Artist).join(Show,Show.artist_id == Artist.id).filter(Show.start_time >= nowTime).all()
+  artist.past_shows = db.session.query(Artist).join(Show,Show.artist_id == Artist.id).filter(Show.start_time < nowTime).all()
+  # upcoming_shows_count = db.session.query(Artist).join(Show,Show.artist_id == Artist.id).filter(Show.start_time>=now).count()
+  # past_shows_count = db.session.query(Artist).join(Show,Show.artist_id == Artist.id).filter(Show.start_time<now).count()
+  # artist.upcoming_shows_count = artist.upcoming_shows.count()
   
-  
-  return render_template('pages/show_artist.html', artist=data)
+  return render_template('pages/show_artist.html', artist=artist)
 
 #  Update
 #  ----------------------------------------------------------------
 @app.route('/artists/<int:artist_id>/edit', methods=['GET'])
 def edit_artist(artist_id):
   form = ArtistForm()
-  artist={
-    "id": 4,
-    "name": "Guns N Petals",
-    "genres": ["Rock n Roll"],
-    "city": "San Francisco",
-    "state": "CA",
-    "phone": "326-123-5000",
-    "website": "https://www.gunsnpetalsband.com",
-    "facebook_link": "https://www.facebook.com/GunsNPetals",
-    "seeking_venue": True,
-    "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
-    "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
-  }
+  # artist={
+  #   "id": 4,
+  #   "name": "Guns N Petals",
+  #   "genres": ["Rock n Roll"],
+  #   "city": "San Francisco",
+  #   "state": "CA",
+  #   "phone": "326-123-5000",
+  #   "website": "https://www.gunsnpetalsband.com",
+  #   "facebook_link": "https://www.facebook.com/GunsNPetals",
+  #   "seeking_venue": True,
+  #   "seeking_description": "Looking for shows to perform at in the San Francisco Bay Area!",
+  #   "image_link": "https://images.unsplash.com/photo-1549213783-8284d0336c4f?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=300&q=80"
+  # }
+  artist = Artist.query.get(artist_id)
+
+ 
   # TODO: populate form with fields from artist with ID <artist_id>
   return render_template('forms/edit_artist.html', form=form, artist=artist)
 
@@ -428,7 +437,20 @@ def edit_artist(artist_id):
 def edit_artist_submission(artist_id):
   # TODO: take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
-
+  artist = Artist.query.filter_by(id=artist_id).first()
+  print(artist)
+  form = ArtistForm(obj=artist)
+  artist.name = form.name.data
+  artist.genres = form.genres.data
+  artist.city = form.city.data
+  artist.state = form.state.data
+  artist.phone = form.phone.data
+  artist.facebook_link = form.facebook_link.data
+  artist.is_seeking_performance = form.is_seeking_performance.data
+  artist.seeking_description = form.seeking_description.data
+  artist.image_link = form.image_link.data
+  db.session.commit()
+  
   return redirect(url_for('show_artist', artist_id=artist_id))
 
 @app.route('/venues/<int:venue_id>/edit', methods=['GET'])
@@ -563,13 +585,36 @@ def create_shows():
 def create_show_submission():
   # called to create new shows in the db, upon submitting new show listing form
   # TODO: insert form data as a new Show record in the db, instead
+  error = False
+  date_format = '%Y-%m-%d %H:%M:%S'
+  data ={}
+  try:
+      artist_id = request.form['artist_id']
+      venue_id = request.form['venue_id']
+      start_time = datetime.strptime(request.form['start_time'],date_format)
 
+      show = Show(artist_id=artist_id,venue_id=venue_id,start_time=start_time)
+      db.session.add(show)
+      db.session.commit()
+
+  except Exception as e:
+      error = True
+      print(f'Error ==> {e}')
+      db.session.rollback()
+      
+  finally:
+      db.session.close()
+      if error:
+            flash('An error occurred. Show could not be listed.')
+      else:
+            flash('Show  was successfully listed!')
+  return render_template('pages/home.html')
   # on successful db insert, flash success
-  flash('Show was successfully listed!')
+  # flash('Show was successfully listed!')
   # TODO: on unsuccessful db insert, flash an error instead.
   # e.g., flash('An error occurred. Show could not be listed.')
   # see: http://flask.pocoo.org/docs/1.0/patterns/flashing/
-  return render_template('pages/home.html')
+
 
 @app.errorhandler(404)
 def not_found_error(error):

@@ -47,9 +47,9 @@
 		<script>
 		const to_delete = document.getElementById('to_delete');
 		to_delete.onclick = function(e){
-			console.log('event',e);
+			
 			const deleteId = e.target.dataset['id'];
-			console.log('dataid',deleteId);
+			
 			fetch('/venues/'+deleteId+'/delete', {
 				method:'DELETE'
 			});
