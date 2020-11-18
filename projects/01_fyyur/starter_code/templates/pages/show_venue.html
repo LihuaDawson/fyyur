@@ -6,14 +6,33 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+		<button id='to_delete' data-id = '{{ venue.id }}'>Delete</button>
+		<button id='to_edit' data-id = '{{ venue.id }}'>Edit</button>
+		<script>
+		const to_delete = document.getElementById('to_delete');
+		to_delete.onclick = function(e){
+			console.log('delete button got clicked');
+			const deleteId = e.target.dataset['id'];
+			console.log('delete Id :'+ deleteId);
+			fetch('/venues/'+deleteId, {
+				method:'DELETE'
+			});
+			
+		};
+		
+		const to_edit = document.getElementById('to_edit');
+		to_edit.onclick = function(e) {
+			const editId = e.target.dataset['id'];
+			
+			window.location.href = '/venues/'+editId+'/edit';
+				}
+			
+		</script>
 		<p class="subtitle">
 			ID: {{ venue.id }}
 		</p>
-		<div class="genres">
-			{% for genre in venue.genres %}
-			<span class="genre">{{ genre }}</span>
-			{% endfor %}
-		</div>
+		
+
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
 		</p>
@@ -41,10 +60,14 @@
 			<i class="fas fa-moon"></i> Not currently seeking talent
 		</p>
 		{% endif %}
+		
 	</div>
 	<div class="col-sm-6">
 		<img src="{{ venue.image_link }}" alt="Venue Image" />
 	</div>
+	
+	
+	
 </div>
 <section>
 	<h2 class="monospace">{{ venue.upcoming_shows_count }} Upcoming {% if venue.upcoming_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
@@ -76,4 +99,6 @@
 </section>
 
 {% endblock %}
+
+
 
