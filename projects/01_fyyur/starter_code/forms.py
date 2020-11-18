@@ -89,8 +89,8 @@ class VenueForm(FlaskForm):
     phone = StringField(
         'phone'
     )
-    image_link = StringField(
-        'image_link'
+    website = StringField(
+        'website'
     )
     
     facebook_link = StringField(
@@ -98,6 +98,9 @@ class VenueForm(FlaskForm):
     )
     is_seeking_talent = BooleanField(
         'is_seeking_talent'
+    )
+    seeking_description = StringField(
+        'seeking_description'
     )
 
 class ArtistForm(FlaskForm):

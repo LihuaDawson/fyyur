@@ -40,11 +40,12 @@ class Venue(db.Model):
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
     phone = db.Column(db.String(120))
-    image_link = db.Column(db.String(500))
+    website = db.Column(db.String(120))
     facebook_link = db.Column(db.String(120))
     is_seeking_talent = db.Column(db.Boolean,default=False)
-    
+    seeking_description = db.Column(db.String())
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
+    shows = db.relationship('Show',cascade = 'all,delete', backref='venue')
     def __repr__(self):
           return f'<Venue {self.id} {self.name}>'
    
@@ -60,10 +61,11 @@ class Artist(db.Model):
     genres = db.Column(db.String(120))
     image_link = db.Column(db.String(500))
     facebook_link = db.Column(db.String(120))
-    is_seeking_performance = db.Column(db.Boolean)
+    is_seeking_performance = db.Column(db.Boolean,default = False)
     seeking_description = db.Column(db.String())
+
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
-    
+    shows = db.relationship('Show',cascade = 'all,delete', backref='aritst')
 
     def __repr__(self):
           return f'<Artist {self.id} {self.name}>'
@@ -72,11 +74,10 @@ class Show(db.Model):
       __tablename__= 'shows'
 
       id = db.Column(db.Integer, primary_key=True)
-      venue_id = db.Column(db.Integer, db.ForeignKey('venues.id'), nullable = False)
-      artist_id = db.Column(db.Integer, db.ForeignKey('artists.id'), nullable = False)
+      venue_id = db.Column(db.Integer, db.ForeignKey('venues.id', ondelete='CASCADE'),nullable=False)
+      artist_id = db.Column(db.Integer, db.ForeignKey('artists.id', ondelete = 'CASCADE'),nullable=False)
       start_time = db.Column(db.DateTime, nullable = False)
-      artists = db.relationship('Artist', backref='show',lazy=True,cascade='all,delete')
-      venues = db.relationship('Venue',backref='show',lazy=True,cascade='all,delete')
+      
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -248,14 +249,15 @@ def create_venue_submission():
       state = request.form['state']
       address = request.form['address']
       phone = request.form['phone']
-      image_link = request.form['image_link']
+      website = request.form['website']
       facebook_link = request.form['facebook_link']
       is_seeking_talent = request.form.get('is_seeking_talent','')
+      seeking_description = request.form['seeking_description']
       if is_seeking_talent:
             is_seeking_talent = True
       else:
             is_seeking_talent = False
-      venue = Venue(name = name, city = city,state = state,address=address,phone = phone,image_link=image_link,facebook_link=facebook_link,is_seeking_talent=is_seeking_talent)
+      venue = Venue(name = name, city = city,state = state,address=address,phone = phone,website=website,facebook_link=facebook_link,is_seeking_talent=is_seeking_talent,seeking_description=seeking_description)
 
       db.session.add(venue)
       db.session.commit()
