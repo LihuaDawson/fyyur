@@ -21,15 +21,5 @@
 	</ul>
 
 {% endfor %}
-<script>
-const to_deletes = document.querySelectorAll('to_deletes')
-for(let i = 0; i < to_deletes.length; i++) {
-  const to_delete = to_deletes[i];
-  to_delete.onclick = function (e) {
-    alert('something here!');
-    console.log('event', e);
-    
-  }
-}
-</script>
+
 {% endblock %}
