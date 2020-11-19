@@ -19,7 +19,7 @@
 			</script>
 		</p>
 		<div class="genres">
-			{% for genre in artist.genres %}
+			{% for genre in artist.genres.strip('{}').split(',') %}
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>

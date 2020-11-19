@@ -321,7 +321,7 @@ def edit_venue_submission(venue_id):
       venue.state = form.state.data
       venue.address = form.address.data
       venue.phone = form.phone.data
-      venue.genres = form.genres.data.split(',')
+      venue.genres = form.genres.data
       venue.website = form.website.data
       venue.facebook_link = form.facebook_link.data
       venue.image_link = form.image_link.data
