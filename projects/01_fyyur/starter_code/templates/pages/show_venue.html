@@ -6,6 +6,15 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+		
+		<div class="genres">
+			{% for genre in venue.genres %}
+			<span class="genre">{{ genre }}</span>
+			{% endfor %}
+		</div>
+		<p class="subtitle">
+			ID: {{ venue.id }}
+		</p>
 		<button id='to_delete' data-id = '{{ venue.id }}'>Delete</button>
 		<button id='to_edit' data-id = '{{ venue.id }}'>Edit</button>
 		<script>
@@ -17,7 +26,7 @@
 			fetch('/venues/'+deleteId, {
 				method:'DELETE'
 			});
-			
+			window.location.href = '/';
 		};
 		
 		const to_edit = document.getElementById('to_edit');
@@ -28,10 +37,6 @@
 				}
 			
 		</script>
-		<p class="subtitle">
-			ID: {{ venue.id }}
-		</p>
-		
 
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
@@ -42,13 +47,14 @@
 		<p>
 			<i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{% else %}No Phone{% endif %}
 		</p>
+	
 		<p>
 			<i class="fas fa-link"></i> {% if venue.website %}<a href="{{ venue.website }}" target="_blank">{{ venue.website }}</a>{% else %}No Website{% endif %}
 		</p>
 		<p>
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
 		</p>
-		{% if venue.seeking_talent %}
+		{% if venue.is_seeking_talent %}
 		<div class="seeking">
 			<p class="lead">Currently seeking talent</p>
 			<div class="description">
@@ -63,35 +69,37 @@
 		
 	</div>
 	<div class="col-sm-6">
+		{% if venue.image_link %}
 		<img src="{{ venue.image_link }}" alt="Venue Image" />
+		{% endif %}
 	</div>
 	
 	
 	
 </div>
 <section>
-	<h2 class="monospace">{{ venue.upcoming_shows_count }} Upcoming {% if venue.upcoming_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<h2 class="monospace">{{ venue.upcoming_shows|length }} Upcoming {% if venue.upcoming_shows|length == 1 %}Show{% else %}Shows{% endif %}</h2>
 	<div class="row">
 		{%for show in venue.upcoming_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
-				<h6>{{ show.start_time|datetime('full') }}</h6>
+				<img src="{{ show.artists.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artists.name }}</a></h5>
+				<h6>{{ show.start_time }}</h6>
 			</div>
 		</div>
 		{% endfor %}
 	</div>
 </section>
 <section>
-	<h2 class="monospace">{{ venue.past_shows_count }} Past {% if venue.past_shows_count == 1 %}Show{% else %}Shows{% endif %}</h2>
+	<h2 class="monospace">{{ venue.past_shows|length }} Past {% if venue.past_shows|length == 1 %}Show{% else %}Shows{% endif %}</h2>
 	<div class="row">
 		{%for show in venue.past_shows %}
 		<div class="col-sm-4">
 			<div class="tile tile-show">
-				<img src="{{ show.artist_image_link }}" alt="Show Artist Image" />
-				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artist_name }}</a></h5>
-				<h6>{{ show.start_time|datetime('full') }}</h6>
+				<img src="{{ show.artists.image_link }}" alt="Show Artist Image" />
+				<h5><a href="/artists/{{ show.artist_id }}">{{ show.artists.name }}</a></h5>
+				<h6>{{ show.start_time  }}</h6>
 			</div>
 		</div>
 		{% endfor %}
