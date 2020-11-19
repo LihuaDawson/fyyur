@@ -8,7 +8,7 @@
 		</h1>
 		
 		<div class="genres">
-			{% for genre in venue.genres %}
+			{% for genre in venue.genres.strip('{}').split(',') %}
 			<span class="genre">{{ genre }}</span>
 			{% endfor %}
 		</div>
