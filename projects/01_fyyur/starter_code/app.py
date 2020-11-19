@@ -36,6 +36,7 @@ class Venue(db.Model):
 
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String())
+    genres = db.Column(db.String(120))
     city = db.Column(db.String(120))
     state = db.Column(db.String(120))
     address = db.Column(db.String(120))
@@ -44,6 +45,7 @@ class Venue(db.Model):
     facebook_link = db.Column(db.String(120))
     is_seeking_talent = db.Column(db.Boolean,default=False)
     seeking_description = db.Column(db.String())
+    image_link = db.Column(db.String(500))
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     shows = db.relationship('Show',cascade = 'all,delete', backref='venue')
     def __repr__(self):
@@ -63,6 +65,7 @@ class Artist(db.Model):
     facebook_link = db.Column(db.String(120))
     is_seeking_performance = db.Column(db.Boolean,default = False)
     seeking_description = db.Column(db.String())
+    website =db.Column(db.String(120))
 
     # TODO: implement any missing fields, as a database migration using Flask-Migrate
     shows = db.relationship('Show',cascade = 'all,delete', backref='aritst')
@@ -78,6 +81,8 @@ class Show(db.Model):
       artist_id = db.Column(db.Integer, db.ForeignKey('artists.id', ondelete = 'CASCADE'),nullable=False)
       start_time = db.Column(db.DateTime, nullable = False)
       
+      venues = db.relationship('Venue')
+      artists = db.relationship('Artist')
 #----------------------------------------------------------------------------#
 # Filters.
 #----------------------------------------------------------------------------#
@@ -444,7 +449,7 @@ def edit_artist_submission(artist_id):
   # TODO: （Done）take values from the form submitted, and update existing
   # artist record with ID <artist_id> using the new attributes
   artist = Artist.query.filter_by(id=artist_id).first()
-  print(artist)
+  
   form = ArtistForm(obj=artist)
   artist.name = form.name.data
   artist.genres = form.genres.data
@@ -477,13 +482,29 @@ def edit_venue(venue_id):
   #   "seeking_description": "We are on the lookout for a local artist to play every two weeks. Please call us.",
   #   "image_link": "https://images.unsplash.com/photo-1543900694-133f37abaaa5?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=400&q=60"
   # }
-  # TODO: populate form with values from venue with ID <venue_id>
+  # TODO: (Done)populate form with values from venue with ID <venue_id>
   return render_template('forms/edit_venue.html', form=form, venue=venue)
 
 @app.route('/venues/<int:venue_id>/edit', methods=['POST'])
 def edit_venue_submission(venue_id):
   # TODO: take values from the form submitted, and update existing
   # venue record with ID <venue_id> using the new attributes
+  venue = Venue.query.get(venue_id)
+  form = VenueForm(obj=venue)
+
+  venue.name = form.name.data
+  venue.city = form.city.data
+  venue.state = form.state.data
+  venue.address = form.address.data
+  venue.phone = form.phone.data
+  venue.genres = form.genres.data
+  venue.website = form.website.data
+  venue.facebook_link = form.facebook_link.data
+  venue.image_link = form.image_link.data
+  venue.is_seeking_talent = form.is_seeking_talent.data
+  venue.seeking_description = form.seeking_description.data
+  db.session.commit()
+  
   return redirect(url_for('show_venue', venue_id=venue_id))
 
 #  Create Artist

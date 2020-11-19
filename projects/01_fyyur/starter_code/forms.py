@@ -24,6 +24,31 @@ class VenueForm(FlaskForm):
     name = StringField(
         'name', validators=[DataRequired()]
     )
+    genres = SelectMultipleField(
+        # TODO implement enum restriction
+        'genres', validators=[DataRequired()],
+        choices=[
+            ('Alternative', 'Alternative'),
+            ('Blues', 'Blues'),
+            ('Classical', 'Classical'),
+            ('Country', 'Country'),
+            ('Electronic', 'Electronic'),
+            ('Folk', 'Folk'),
+            ('Funk', 'Funk'),
+            ('Hip-Hop', 'Hip-Hop'),
+            ('Heavy Metal', 'Heavy Metal'),
+            ('Instrumental', 'Instrumental'),
+            ('Jazz', 'Jazz'),
+            ('Musical Theatre', 'Musical Theatre'),
+            ('Pop', 'Pop'),
+            ('Punk', 'Punk'),
+            ('R&B', 'R&B'),
+            ('Reggae', 'Reggae'),
+            ('Rock n Roll', 'Rock n Roll'),
+            ('Soul', 'Soul'),
+            ('Other', 'Other')
+        ]
+    )
     city = StringField(
         'city', validators=[DataRequired()]
     )
@@ -101,6 +126,9 @@ class VenueForm(FlaskForm):
     )
     seeking_description = StringField(
         'seeking_description'
+    )
+    image_link = StringField(
+        'image_link'
     )
 
 class ArtistForm(FlaskForm):
@@ -207,6 +235,9 @@ class ArtistForm(FlaskForm):
     )
     seeking_description = StringField(
         'seeking_description'
+    )
+    website = StringField(
+        'website'
     )
 
 # TODO IMPLEMENT NEW ARTIST FORM AND NEW SHOW FORM

@@ -6,6 +6,15 @@
 		<h1 class="monospace">
 			{{ venue.name }}
 		</h1>
+		
+		<div class="genres">
+			{% for genre in venue.genres %}
+			<span class="genre">{{ genre }}</span>
+			{% endfor %}
+		</div>
+		<p class="subtitle">
+			ID: {{ venue.id }}
+		</p>
 		<button id='to_delete' data-id = '{{ venue.id }}'>Delete</button>
 		<button id='to_edit' data-id = '{{ venue.id }}'>Edit</button>
 		<script>
@@ -28,10 +37,6 @@
 				}
 			
 		</script>
-		<p class="subtitle">
-			ID: {{ venue.id }}
-		</p>
-		
 
 		<p>
 			<i class="fas fa-globe-americas"></i> {{ venue.city }}, {{ venue.state }}
@@ -43,12 +48,15 @@
 			<i class="fas fa-phone-alt"></i> {% if venue.phone %}{{ venue.phone }}{% else %}No Phone{% endif %}
 		</p>
 		<p>
+			<i class="fas"></i> {% if venue.genres %}{{ venue.genres}}{% else %}No genre{% endif %}
+		</p>
+		<p>
 			<i class="fas fa-link"></i> {% if venue.website %}<a href="{{ venue.website }}" target="_blank">{{ venue.website }}</a>{% else %}No Website{% endif %}
 		</p>
 		<p>
 			<i class="fab fa-facebook-f"></i> {% if venue.facebook_link %}<a href="{{ venue.facebook_link }}" target="_blank">{{ venue.facebook_link }}</a>{% else %}No Facebook Link{% endif %}
 		</p>
-		{% if venue.seeking_talent %}
+		{% if venue.is_seeking_talent %}
 		<div class="seeking">
 			<p class="lead">Currently seeking talent</p>
 			<div class="description">
@@ -63,7 +71,9 @@
 		
 	</div>
 	<div class="col-sm-6">
+		{% if venue.image_link %}
 		<img src="{{ venue.image_link }}" alt="Venue Image" />
+		{% endif %}
 	</div>
 	
 	
